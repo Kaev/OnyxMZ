@@ -1,3 +1,70 @@
-.loginInput {
-    background-color: white;
+#UI {
+    z-index: 4;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
+#errorPrinter {
+    z-index: 3;
+}
+.login-container {
+	position:absolute;
+	transform: translate(-50%,-50%);
+    background-color: rgba(0, 0, 0, 0.89);
+	border-radius:3px;
+    padding:70px 100px;
+} 
+.login-input-container {
+	position:relative;
+	margin-bottom:25px;
+}
+.login-input-container label {
+    position:absolute;
+    top:0px;
+    left:0px;
+    font-size:16px;
+    color:#fff;	
+    pointer-events:none;
+    transition: all 0.5s ease-in-out;
+}
+.login-input-container input { 
+    border:0;
+    border-bottom:1px solid #555;  
+    background:transparent;
+    width:200px;
+    padding:8px 0 5px 0;
+    font-size:16px;
+    color:#fff;
+    transition: border-bottom 0.5s ease-in-out;
+}
+.login-input-container input:focus { 
+    border:none;	
+    outline:none;
+    border-bottom:1px solid blueviolet;	
+}
+.login-input-container input:focus ~ label,
+.login-input-container input:valid ~ label {
+	top:-12px;
+	font-size:14px;
+}
+.login-input-container input:valid {
+	border-bottom:1px solid blueviolet;
+}
+.login-container button {
+    color: white;
+    background-color: blueviolet;
+    border: none;
+    border-radius: 3px;
+    padding: 7px 75px;
+    transition: background-color 0.2s ease-in-out;
+}
+.login-container button:focus {
+    outline: none;
+    background-color: #6508bc;
+}
+.login-container button:active {
+    background-color: #4e0096;
+    transform: translateY(2px);
+}
+

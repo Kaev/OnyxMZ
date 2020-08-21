@@ -32,14 +32,35 @@ Scene_Login.prototype.create = function() {
     );
     this.addChild(this._backSprite1);
 
-    // Set login form
+    // Load login form and replace HTML UI with it
     var loginHtml = OnyxMZ.readFile("js/plugins/OnyxMZ/html/login.html");
-    document.getElementById('UI').innerHTML = loginHtml;
+    OnyxMZ.UI().innerHTML = loginHtml;
 
-    var connectButton = document.getElementById('connect').onclick = function() {
-        console.log(`Connect`);
+    var username = document.getElementById('username');
+    var password = document.getElementById('password');
+
+    // Set username if cache is not empty
+    if (!!OnyxMZ.Cache.account)
+    {
+        username.value = OnyxMZ.Cache.account;
     }
 
+    // Add logic to connect button
+    var connectButton = document.getElementById('login-connect-button').onclick = function() {
+        // Save username to cache if not empty
+        if (!!username.value)
+        {
+            OnyxMZ.Cache.account = username.value;
+            OnyxMZ.saveCache();
+        }
+
+        DataManager.setupNewGame();
+        //Scene_Login.prototype.fadeOutAll();
+        SceneManager.goto(Scene_Map);
+        
+        // Remove login UI
+        OnyxMZ.UI().innerHTML = '';
+    }
 }
 
 Scene_Login.prototype.terminate = function() {
@@ -47,6 +68,27 @@ Scene_Login.prototype.terminate = function() {
     SceneManager.snapForBackground();
 };
 
+Scene_Login.prototype.processHandling = function()
+{
+    console.log(Input.isRepeated('backspace'));
+}
+
+Input._shouldPreventDefault = function(keyCode) {
+    /*switch (keyCode) {
+        case 8: // backspace
+        case 9: // tab
+        case 33: // pageup
+        case 34: // pagedown
+        case 37: // left arrow
+        case 38: // up arrow
+        case 39: // right arrow
+        case 40: // down arrow
+            return true;
+    }*/
+    return false;
+};
+
+// Overwrite Scene_Boot.start to show Scene_Login instead of Scene_Title
 Scene_Boot.prototype.start = function() {
     Scene_Base.prototype.start.call(this);
     SoundManager.preloadImportantSounds();
@@ -64,4 +106,3 @@ Scene_Boot.prototype.start = function() {
     this.resizeScreen();
     this.updateDocumentTitle();
 };
-
