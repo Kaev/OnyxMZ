@@ -4,12 +4,12 @@
 
 /*:
  * @target MZ
- * @plugindesc Replaces the title screen with the OnyxMZ login title screen
+ * @plugindesc Replaces the title screen with the OnyxMZ login screen
  * @author Kevin Bernau
  *
  * @help OnyxMZ-TitleWindow.js
  *
- * This plugin replaces the title screen with the OnyxMZ login title screen
+ * This plugin replaces the title screen with the OnyxMZ login screen
  */
 
 function Scene_Login() {
