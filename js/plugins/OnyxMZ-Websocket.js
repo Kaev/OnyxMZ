@@ -29,22 +29,18 @@ OnyxMZ.Connection = new OnyxMZ.WebSocket(OnyxMZ.Server);
 
 // Event for opened server connection
 OnyxMZ.Connection.on('open', function() {
-    let data = {
-        data: 'Opened Connection'
-    };
-    OnyxMZ.Send(data);
     OnyxMZ.Heartbeat();
 });
 
-// Event for socket errors
-OnyxMZ.Connection.on('error', function(e) {
-    console.log(`WebSocket error: ${e}`);
+// Event for received server messages
+OnyxMZ.Connection.on('message', function(data) {
+    console.log(`Received: data: ${data}`);
+    OnyxMZ.HandlePacket(JSON.parse(data));
 });
 
-// Event for received server messages
-OnyxMZ.Connection.on('message', function(e) {
-    //let received = JSON.parse(e.data);
-    console.log(`Received: ${e.data}`);
+// Event for socket errors
+OnyxMZ.Connection.on('error', function(error) {
+    console.log(`Socket Error: ${error}`);
 });
 
 // Event for connection closed
