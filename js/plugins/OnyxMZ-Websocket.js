@@ -34,7 +34,6 @@ OnyxMZ.Connection.on('open', function() {
 
 // Event for received server messages
 OnyxMZ.Connection.on('message', function(data) {
-    console.log(`Received: data: ${data}`);
     OnyxMZ.HandlePacket(JSON.parse(data));
 });
 

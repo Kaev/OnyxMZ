@@ -1,9 +1,19 @@
-
-
 const WebSocket = require('ws');
+const DbHandler = require('./dbHandler');
 const PacketHandler = require('./packetHandler');
+const MapHandler = require('./mapHandler');
 
 const wss = new WebSocket.Server({port: 1337});
+
+(async function() {
+
+
+    await DbHandler.initialize();
+    MapHandler.loadMaps();
+
+})();
+
+console.log('test');
 
 // Event for new client connection
 wss.on('connection', ws => {
@@ -16,7 +26,7 @@ wss.on('connection', ws => {
     });
 
     // Event for client message received
-    ws.on('message', function(data) {
+    ws.on('message', async function(data) {
         console.log(`Received packet: ws: ${ws} data: ${data}`);
         PacketHandler.handlePacket(ws, JSON.parse(data));
     });

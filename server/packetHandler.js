@@ -1,4 +1,4 @@
-function OnPlayerMove(ws, data) {
+async function OnPlayerMove(ws, data) {
     let test = {
         type: "playerMoved"
     }
@@ -9,10 +9,12 @@ let packetHandlers = {
     "playerMoved": OnPlayerMove
 }
 
-exports.handlePacket = function(ws, data) {
+async function handlePacket(ws, data) {
 
     if (data.type in packetHandlers)
         packetHandlers[data.type](ws, data);
     else
         console.log(`Unknown packet type ${data.type}`);
 }
+
+exports.handlePacket = handlePacket;
