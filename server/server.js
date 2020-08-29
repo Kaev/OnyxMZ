@@ -1,24 +1,39 @@
+OnyxMZ = {};
+
+const Helper = require('./helper');
 const WebSocket = require('ws');
 const DbHandler = require('./dbHandler');
 const PacketHandler = require('./packetHandler');
-const MapHandler = require('./mapHandler');
 
 const wss = new WebSocket.Server({port: 1337});
 
-(async function() {
+const fs = require('fs');
+const mapNameExpression = /Map(\d\d\d)\.json/;
+
+let maps = {};
+
+OnyxMZ.Clients = {};
+
+(async () => {
+
 
 
     await DbHandler.initialize();
-    MapHandler.loadMaps();
+
+    /*console.log(OnyxMZ.Db.Accounts);
+    console.log(OnyxMZ.Db.Teleports);
+    console.log(OnyxMZ.Db.Characters);
+
+    let account = await Helper.findAsync(OnyxMZ.Db.Accounts, account => account.name === 'Kaev');
+    console.log(account);*/
 
 })();
-
-console.log('test');
 
 // Event for new client connection
 wss.on('connection', ws => {
     ws.isAlive = true;
     console.log(`${ws._socket.remoteAddress}:${ws._socket.remotePort} connected.`);
+    OnyxMZ.Clients[ws] = 'test';
 
     // Event for heartbeat packet
     ws.on('pong', function(data) {
@@ -26,7 +41,7 @@ wss.on('connection', ws => {
     });
 
     // Event for client message received
-    ws.on('message', async function(data) {
+    ws.on('message', function(data) {
         console.log(`Received packet: ws: ${ws} data: ${data}`);
         PacketHandler.handlePacket(ws, JSON.parse(data));
     });
@@ -34,11 +49,13 @@ wss.on('connection', ws => {
     // Event for socket error
     ws.on('error', function(error) {
         console.log(`Socket error: ${error}`);
+        delete OnyxMZ.Clients[ws];
     });
 
     // Event for client disconnected
     ws.on('close', function(code, reason) {
         console.log(`Client ${ws._socket.remoteAddress}:${ws._socket.remotePort} disconnected: Code ${code} Reason: ${reason}`);
+        delete OnyxMZ.Clients[ws];
     });
 });
 
@@ -53,6 +70,7 @@ function heartbeat() {
         if (ws.isAlive === false)
         {
             console.log(`Heartbeat fail: ${ws._socket.remoteAddress}:${ws._socket.remotePort}`);
+            delete OnyxMZ.Clients[ws];
             return ws.terminate();
         }
         ws.isAlive = false;
@@ -60,3 +78,8 @@ function heartbeat() {
     });
 };
 setInterval(heartbeat, 10000);
+
+OnyxMZ.Send = function(ws, data) {
+    var json = JSON.stringify(data);
+    ws.send(json);
+};

@@ -12,27 +12,7 @@
  * This plugin replaces the title screen with the OnyxMZ login screen
  */
 
-function Scene_Login() {
-    this.initialize(...arguments);
-}
-
-Scene_Login.prototype = Object.create(Scene_Base.prototype);
-Scene_Login.prototype.constructor = Scene_Login;
-
-Scene_Login.prototype.initialize = function () {
-    Scene_Base.prototype.initialize.call(this);
-}
-
-Scene_Login.prototype.create = function() {
-    Scene_Base.prototype.create.call(this);
-    
-    // Set background
-    this._backSprite1 = new Sprite(
-        ImageManager.loadTitle1($dataSystem.title1Name)
-    );
-    this.addChild(this._backSprite1);
-
-    // Load login form and replace HTML UI with it
+ OnyxMZ.LoadLoginUI = function() {
     var loginHtml = OnyxMZ.readFile("js/plugins/OnyxMZ/html/login.html");
     OnyxMZ.UI().innerHTML = loginHtml;
 
@@ -54,13 +34,66 @@ Scene_Login.prototype.create = function() {
             OnyxMZ.saveCache();
         }
 
-        DataManager.setupNewGame();
-        //Scene_Login.prototype.fadeOutAll();
-        SceneManager.goto(Scene_Map);
+        let loginPacket = {
+            opcode: "login",
+            username: username.value,
+            password: password.value
+        };
+        OnyxMZ.Send(loginPacket);
         
         // Remove login UI
-        OnyxMZ.UI().innerHTML = '';
+        OnyxMZ.ClearUI();
     }
+};
+
+OnyxMZ.LoadCharacterListUI = function(characters) {
+    var characterListHtml = OnyxMZ.readFile("js/plugins/OnyxMZ/html/characterList.html");
+    OnyxMZ.UI().innerHTML = characterListHtml;
+
+    var buttonContainer = document.getElementById('character-button-container');
+
+    console.log(buttonContainer);
+
+    characters.forEach(character => {
+        var characterButton = document.createElement("Button");
+        characterButton.innerHTML = character.name;
+        characterButton.tabIndex = -1;
+
+        characterButton.onclick = function() {
+            let worldJoinPacket = {
+                opcode: "worldJoin",
+                characterId: character.id
+            };
+            OnyxMZ.Send(worldJoinPacket);
+            OnyxMZ.ClearUI();
+        };
+
+        buttonContainer.appendChild(characterButton);
+    });
+};
+
+function Scene_Login() {
+    this.initialize(...arguments);
+}
+
+Scene_Login.prototype = Object.create(Scene_Base.prototype);
+Scene_Login.prototype.constructor = Scene_Login;
+
+Scene_Login.prototype.initialize = function () {
+    Scene_Base.prototype.initialize.call(this);
+}
+
+Scene_Login.prototype.create = function() {
+    Scene_Base.prototype.create.call(this);
+    
+    // Set background
+    this._backSprite1 = new Sprite(
+        ImageManager.loadTitle1($dataSystem.title1Name)
+    );
+    this.addChild(this._backSprite1);
+
+    // Load login form and replace HTML UI with it
+    OnyxMZ.LoadLoginUI();
 }
 
 Scene_Login.prototype.terminate = function() {

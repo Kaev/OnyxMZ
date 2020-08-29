@@ -1,13 +1,52 @@
-const mysql = require('mysql');
+const db = require('./database');
 
-let con;
-let teleports = {};
+OnyxMZ.Db = new db.database("localhost", "root", "123", "onyxmz");
+
+OnyxMZ.Db.Accounts = [];
+OnyxMZ.Db.Characters = [];
+OnyxMZ.Db.Teleports = [];
+
+async function loadAccounts() {
+    await OnyxMZ.Db.query('SELECT * FROM accounts')
+    .then(rows => {
+        rows.forEach(row => {
+            OnyxMZ.Db.Accounts[row.id] = {
+                id: row.id,
+                name: row.name,
+                password: row.password
+            };
+        });
+    })
+    .catch(err => {
+        throw err;
+    });
+}
+
+async function loadCharacters() {
+    await OnyxMZ.Db.query("SELECT * FROM characters")
+    .then(rows => {
+        rows.forEach(row => {
+            OnyxMZ.Db.Characters[row.id] = {
+                id: row.id,
+                accountId: row.accountId,
+                name: row.name,
+                map: row.map,
+                x: row.x,
+                y: row.y,
+                direction: row.direction
+            };
+        });
+    })
+    .catch(err => {
+        throw err;
+    });
+}
 
 async function loadTeleports() {
-    const rows = await con.query("SELECT * FROM teleports", function (err, result, fields) {
-        if (err) throw err;
-        result.forEach(row => {
-            teleports[row.id] = {
+    await OnyxMZ.Db.query("SELECT * FROM teleports")
+    .then(rows => {
+        rows.forEach(row => {
+            OnyxMZ.Db.Teleports[row.id] = {
                 id: row.id,
                 fromMapId: row.fromMapId,
                 fromX: row.fromX,
@@ -17,19 +56,29 @@ async function loadTeleports() {
                 toY: row.toY
             };
         });
+    })
+    .catch(err => {
+        throw err;
     });
 };
 
 async function initialize() {
-    con = await mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "123",
-        database: "onyxmz"
-    });
-    
-    loadTeleports();
+    console.log('Load database');
+
+    await Promise.all([
+        loadAccounts(), 
+        loadCharacters(), 
+        loadTeleports()
+    ])
+    .then(values => {
+        console.log('Loading database done');
+    })
+    .catch(err => {
+        throw err;
+    })
 };
 
-exports.loadTeleports = loadTeleports;
 exports.initialize = initialize;
+exports.loadTeleports = loadTeleports;
+exports.loadAccounts = loadAccounts;
+exports.loadCharacters = loadCharacters;

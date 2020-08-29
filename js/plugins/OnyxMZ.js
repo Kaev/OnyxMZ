@@ -13,7 +13,7 @@
  * operations and prepares the HTML UI
  */
 
-function OnyxMZ() {}
+OnyxMZ = {}
 
 // Requirements
 OnyxMZ.fs = require("fs");
@@ -24,7 +24,11 @@ OnyxMZ.Cache = {};
 // Get HTML UI
 OnyxMZ.UI = function() {
     return document.getElementById('UI');
-}
+};
+
+OnyxMZ.ClearUI = function() {
+    OnyxMZ.UI().innerHTML = '';
+};
 
 // Read a file
 OnyxMZ.readFile = function(path) {
