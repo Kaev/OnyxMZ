@@ -12,38 +12,57 @@
  * This plugin replaces the title screen with the OnyxMZ login screen
  */
 
+ function login(username, password) {
+    // Save username to cache if not empty
+    if (!!username)
+    {
+        OnyxMZ.Cache.account = username;
+        OnyxMZ.saveCache();
+    }
+
+    let loginPacket = {
+        opcode: "login",
+        username: username,
+        password: password
+    };
+    OnyxMZ.Send(loginPacket);
+ }
+
  OnyxMZ.LoadLoginUI = function() {
     var loginHtml = OnyxMZ.readFile("js/plugins/OnyxMZ/html/login.html");
     OnyxMZ.UI().innerHTML = loginHtml;
 
     var username = document.getElementById('username');
     var password = document.getElementById('password');
+    var invalidAccountDialog = document.getElementById('invalid-account-dialog');
 
-    // Set username if cache is not empty
-    if (!!OnyxMZ.Cache.account)
-    {
+    // Load username if cache is not empty
+    if (!!OnyxMZ.Cache.account) {
         username.value = OnyxMZ.Cache.account;
+        password.focus();
+    }
+    else
+        username.focus();
+
+    // Add logic to password input
+    password.onkeydown = function(e) {
+        if (e.keyCode === 13) { // Enter
+            e.preventDefault();
+            login(username.value, password.value);
+        }
     }
 
     // Add logic to connect button
-    var connectButton = document.getElementById('login-connect-button').onclick = function() {
-        // Save username to cache if not empty
-        if (!!username.value)
-        {
-            OnyxMZ.Cache.account = username.value;
-            OnyxMZ.saveCache();
-        }
-
-        let loginPacket = {
-            opcode: "login",
-            username: username.value,
-            password: password.value
-        };
-        OnyxMZ.Send(loginPacket);
-        
-        // Remove login UI
-        OnyxMZ.ClearUI();
+    document.getElementById('login-connect-button').onclick = function() {
+        login(username.value, password.value);
     }
+
+    // Add logic to invalid account dialog button
+    document.getElementById('cancel-invalid-account-dialog').onclick = function() {
+        invalidAccountDialog.close();
+        password.value = '';
+        password.focus();
+    };
 };
 
 OnyxMZ.LoadCharacterListUI = function(characters) {
@@ -51,9 +70,9 @@ OnyxMZ.LoadCharacterListUI = function(characters) {
     OnyxMZ.UI().innerHTML = characterListHtml;
 
     var buttonContainer = document.getElementById('character-button-container');
+    var invalidCharacterDialog = document.getElementById('invalid-character-dialog');
 
-    console.log(buttonContainer);
-
+    // Create a button for each character
     characters.forEach(character => {
         var characterButton = document.createElement("Button");
         characterButton.innerHTML = character.name;
@@ -65,11 +84,15 @@ OnyxMZ.LoadCharacterListUI = function(characters) {
                 characterId: character.id
             };
             OnyxMZ.Send(worldJoinPacket);
-            OnyxMZ.ClearUI();
         };
 
         buttonContainer.appendChild(characterButton);
     });
+
+    // Add logic to invalid character dialog button
+    document.getElementById('cancel-invalid-character-dialog').onclick = function() {
+        invalidCharacterDialog.close();
+    };
 };
 
 function Scene_Login() {

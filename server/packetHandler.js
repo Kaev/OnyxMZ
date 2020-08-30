@@ -8,12 +8,11 @@ function OnPlayerMove(ws, data) {
 };
 
 function OnWorldJoin(ws, data) {
-    let character = OnyxMZ.Db.Characters[data.characterId];
-    if (character === undefined)
+    let playerCharacter = OnyxMZ.Db.Characters[data.characterId];
+    if (playerCharacter === undefined)
     {
         let invalidCharacterPacket = {
-            opcode: "invalidCharacter",
-            characterId: data.characterId
+            opcode: "invalidCharacter"
         };
         OnyxMZ.Send(ws, invalidCharacterPacket);
         return;
@@ -21,12 +20,14 @@ function OnWorldJoin(ws, data) {
 
     let joinedWorldPacket = {
         opcode: "worldJoined",
-        id: character.id,
-        name: character.name,
-        map: character.map,
-        x: character.x,
-        y: character.y,
-        direction: character.direction
+        id: playerCharacter.id,
+        name: playerCharacter.name,
+        map: playerCharacter.map,
+        x: playerCharacter.x,
+        y: playerCharacter.y,
+        direction: playerCharacter.direction /*,
+        players: OnyxMZ.Db.Characters.find(character => character !== undefined && character != playerCharacter && character.map === playerCharacter.map)
+        .map(char => ({id: char.id, name: char.name, x: char.x, y: char.y}))*/
     };
     OnyxMZ.Send(ws, joinedWorldPacket);
 };

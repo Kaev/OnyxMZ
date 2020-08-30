@@ -68,6 +68,41 @@
     transform: translateY(2px);
 }
 
+.invalid-account-dialog {
+    background-color: rgba(0, 0, 0, 0.89);
+    border-width: 1px;
+    border-color: blueviolet;
+	border-radius:3px;
+    padding:70px 100px;
+    color:#fff;
+}
+
+.invalid-account-text-container {
+    margin-bottom: 5px;
+}
+
+.invalid-account-dialog button {
+    color: white;
+    background-color: blueviolet;
+    border: none;
+    border-radius: 3px;
+    padding: 7px 75px;
+    margin-top: 5px;
+    transition: background-color 0.2s ease-in-out;
+    margin: auto;
+    display: block;
+}
+
+.invalid-account-dialog button:focus {
+    outline: none;
+    background-color: #6508bc;
+}
+
+.invalid-account-dialog button:active {
+    background-color: #4e0096;
+    transform: translateY(2px);
+}
+
 .character-list-container {
 	position:absolute;
 	transform: translate(-50%,-50%);
@@ -93,6 +128,41 @@
 }
 
 .character-list-container button:active {
+    background-color: #4e0096;
+    transform: translateY(2px);
+}
+
+.invalid-character-dialog {
+    background-color: rgba(0, 0, 0, 0.89);
+    border-width: 1px;
+    border-color: blueviolet;
+	border-radius:3px;
+    padding:70px 100px;
+    color:#fff;
+}
+
+.invalid-character-text-container {
+    margin-bottom: 5px;
+}
+
+.invalid-character-dialog button {
+    color: white;
+    background-color: blueviolet;
+    border: none;
+    border-radius: 3px;
+    padding: 7px 75px;
+    margin-top: 5px;
+    transition: background-color 0.2s ease-in-out;
+    margin: auto;
+    display: block;
+}
+
+.invalid-character-dialog button:focus {
+    outline: none;
+    background-color: #6508bc;
+}
+
+.invalid-character-dialog button:active {
     background-color: #4e0096;
     transform: translateY(2px);
 }

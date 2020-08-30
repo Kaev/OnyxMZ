@@ -13,7 +13,8 @@
  */
 
 OnInvalidCharacter = function(data) {
-    console.log(`Invalid character id ${data.characterId}`);
+    var invalidAccountDialog = document.getElementById('invalid-character-dialog');
+    invalidAccountDialog.showModal();
 }
 
 OnPlayerMoved = function(data) {
@@ -21,19 +22,27 @@ OnPlayerMoved = function(data) {
 };
 
 OnWorldJoined = function(data) {
-    console.log('Join World');
+
+    console.log(data);
+
+    // Clear character list UI
+    OnyxMZ.ClearUI();
+
+    // Prepare new game status
     DataManager.setupNewGame();
+
+    // Teleport player to map
     $gamePlayer.reserveTransfer(data.map, data.x, data.y, data.direction, 0);
     SceneManager.goto(Scene_Map);
 }
 
 OnCharacterList = function(data) {
-    console.log('Load Char List');
     OnyxMZ.LoadCharacterListUI(data.characters);
 }
 
 OnInvalidLogin = function(data) {
-    console.log(`Invalid login data!`);
+    var invalidAccountDialog = document.getElementById('invalid-account-dialog');
+    invalidAccountDialog.showModal();
 }
 
  OnyxMZ.PacketHandlers = {
